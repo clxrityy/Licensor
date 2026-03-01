@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Add dependencies ✓
+## 1. Add dependencies [**✓**]
 
 **Rust (`Cargo.toml`)**:
 
@@ -32,12 +32,12 @@
 
 ---
 
-## 2. Configure Tauri capabilities
+## 2. Configure Tauri capabilities [**✓**]
 
 Update `default.json`:
 
 - `sql:default` — database access
-- `fs:default`, `fs:allow-read`, `fs:allow-write`, `fs:scope-app-data` — filesystem for templates/attachments
+- `fs:default`, `fs:allow-read`, `fs:allow-write`, `fs:scope-appdata` — filesystem for templates/attachments
 - `dialog:default` — save-file dialogs for export (add tauri-plugin-dialog if needed)
 
 Register all plugins in `lib.rs`.
