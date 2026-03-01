@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Add dependencies
+## 1. Add dependencies ✓
 
 **Rust (`Cargo.toml`)**:
 
