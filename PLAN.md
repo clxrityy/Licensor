@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Add dependencies [**✓**]
+## 1. Add dependencies **[✓]**
 
 **Rust (`Cargo.toml`)**:
 
@@ -32,7 +32,7 @@
 
 ---
 
-## 2. Configure Tauri capabilities [**✓**]
+## 2. Configure Tauri capabilities **[✓]**
 
 Update `default.json`:
 
@@ -44,7 +44,7 @@ Register all plugins in `lib.rs`.
 
 ---
 
-## 3. Design SQLite schema [**✓**]
+## 3. Design SQLite schema **[✓]**
 
 Migration infrastructure:
 
@@ -80,7 +80,7 @@ With **INSERT**/**UPDATE**/**DELETE** triggers on `documents` to keep the FTS in
 
 ---
 
-## 4. Build Rust backend commands
+## 4. Build Rust backend commands **[✓]**
 
 Split into modules:
 `app/src/commands/{templates,documents,folders,attachments,export}.rs`

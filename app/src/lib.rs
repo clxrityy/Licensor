@@ -1,20 +1,42 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-// #[tauri::command]
-// fn greet(name: &str) -> String {
-//     format!("Hello, {}! You've been greeted from Rust!", name)
-// }
+mod commands;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        // Each plugin must be explicitly initialized here.
-        // The order matters: opener is Tauri's built-in, the rest are addons.
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_sql::Builder::new().build())   // SQLite via JS frontend
-        .plugin(tauri_plugin_fs::init())                    // File system access
-        .plugin(tauri_plugin_dialog::init())                // Native save/open dialogs
+        .plugin(tauri_plugin_sql::Builder::new().build())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
-            // Commands will be registered here in Step 4
+            // Templates
+            commands::templates::create_template,
+            commands::templates::update_template,
+            commands::templates::delete_template,
+            commands::templates::list_templates,
+            commands::templates::get_template,
+            commands::templates::clone_template,
+            // Documents
+            commands::documents::create_document_from_template,
+            commands::documents::update_document,
+            commands::documents::delete_document,
+            commands::documents::list_documents,
+            commands::documents::get_document,
+            commands::documents::search_documents,
+            // Folders
+            commands::folders::create_folder,
+            commands::folders::rename_folder,
+            commands::folders::delete_folder,
+            commands::folders::list_folder_contents,
+            // Attachments
+            commands::attachments::add_attachment,
+            commands::attachments::delete_attachment,
+            commands::attachments::list_attachments,
+            // Metadata
+            commands::metadata::set_metadata,
+            commands::metadata::get_metadata,
+            commands::metadata::delete_metadata,
+            // Export
+            commands::export::export_document,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
