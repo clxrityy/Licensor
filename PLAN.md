@@ -44,7 +44,7 @@ Register all plugins in `lib.rs`.
 
 ---
 
-## 3. Design SQLite schema
+## 3. Design SQLite schema [**✓**]
 
 Migration infrastructure:
 
