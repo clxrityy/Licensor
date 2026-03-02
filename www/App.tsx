@@ -1,60 +1,32 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 
-const isTauri = () => typeof window !== "undefined"&& "__TAURI__INTERNALS__" in window;
-
-function App() {
-  const [greetMsg, setGreetMsg] = useState<string>("");
-  const [name, setName] = useState<string>("");
-
-  async function greet() {
-    if (!isTauri()) {
-			setGreetMsg(`Hello, ${name}! (from Vite)`);
-			return;
-		}
-    try {
-      setGreetMsg(await invoke("greet", { name }));
-    } catch (e) {
-      setGreetMsg("error: " + e);
-    }
-  }
-
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+// Placeholder pages — will be replaced with real components
+function Home() {
+	return <div className="p-6"><h2 className="text-xl font-semibold">Welcome to Licensor</h2></div>;
 }
 
-export default App;
+function NotFound() {
+	return <div className="p-6 text-red-500">404 — Page not found</div>;
+}
+
+export default function App() {
+	return (
+		// Full-height flex layout: sidebar fixed-width, content fills remaining space
+		<div className="flex h-screen bg-gray-50 text-gray-900">
+			<Sidebar />
+
+			{/* Main content area — scrollable independently of sidebar */}
+			<main className="flex-1 overflow-y-auto">
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/folders/:folderId" element={<Home />} />
+					<Route path="/templates/:templateId" element={<Home />} />
+					<Route path="/documents/:documentId" element={<Home />} />
+					<Route path="/search" element={<Home />} />
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+			</main>
+		</div>
+	);
+}
