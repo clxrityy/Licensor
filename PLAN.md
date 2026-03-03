@@ -122,7 +122,7 @@ Export commands:
 
 ---
 
-## 5. Build frontend layout
+## 5. Build frontend layout **[✓]**
 
 ```yaml
 www/

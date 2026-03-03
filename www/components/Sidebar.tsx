@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FolderTree from "./FolderTree";
 import { useFolders } from "../hooks/useFolders";
@@ -12,6 +12,8 @@ export default function Sidebar() {
 		location.pathname === path ? "bg-gray-200 font-medium" : "hover:bg-gray-100";
 
 	const { folders, loading: foldersLoading } = useFolders();
+
+	const navigate = useNavigate();
 
 	return (
 		<aside className="w-64 h-screen flex flex-col border-r border-gray-200 bg-white">
@@ -27,8 +29,13 @@ export default function Sidebar() {
 					placeholder="Search documents..."
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && searchQuery.trim()) {
+							navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+						}
+					}}
 					className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 				/>
 			</div>
 
@@ -55,8 +62,11 @@ export default function Sidebar() {
 
 			{/* Bottom actions */}
 			<div className="p-3 border-t border-gray-200">
-				<button className="w-full px-3 py-2 text-sm text-white bg-blue-600 rounded-md
-                           hover:bg-blue-700 transition-colors">
+				<button
+					onClick={() => navigate("/templates/new")}
+					className="w-full px-3 py-2 text-sm text-white bg-blue-600 rounded-md
+             hover:bg-blue-700 transition-colors"
+				>
 					+ New Template
 				</button>
 			</div>
