@@ -1,5 +1,90 @@
 // www/lib/db.ts
 import Database from "@tauri-apps/plugin-sql";
+import { invoke } from "@tauri-apps/api/core";
+
+// ─── Seed bundled templates ─────────────────────────────────────────────────
+// Runs once after migrations. Reads .md files bundled in the app binary,
+// parses frontmatter for name + variables, inserts into SQLite.
+
+interface BundledTemplate {
+	filename: string;
+	content: string;
+}
+
+async function seedBundledTemplates(db: Database): Promise<void> {
+	// Only seed if the templates table is empty
+	const rows = await db.select<{ count: number }[]>(
+		"SELECT COUNT(*) as count FROM templates"
+	);
+	if ((rows[0]?.count ?? 0) > 0) return;
+
+	let templates: BundledTemplate[];
+	try {
+		templates = await invoke<BundledTemplate[]>("load_bundled_templates");
+	} catch (e) {
+		console.warn("[seed] Could not load bundled templates:", e);
+		return;
+	}
+
+	if (templates.length === 0) return;
+
+	console.log(`[seed] Loading ${templates.length} bundled templates`);
+
+	for (const tpl of templates) {
+		const { name, variables } = parseFrontmatter(tpl.content);
+		const id = crypto.randomUUID();
+
+		await db.execute(
+			"INSERT INTO templates (id, folder_id, name, content, variables) VALUES (?, NULL, ?, ?, ?)",
+			[id, name, tpl.content, JSON.stringify(variables)]
+		);
+
+		console.log(`[seed] Loaded: ${name}`);
+	}
+}
+
+/** Extract name and variables from YAML frontmatter between --- delimiters */
+function parseFrontmatter(content: string): { name: string; variables: unknown[] } {
+	const trimmed = content.trimStart();
+	if (!trimmed.startsWith("---")) {
+		return { name: "Untitled", variables: [] };
+	}
+
+	const afterFirst = trimmed.slice(3);
+	const endIndex = afterFirst.indexOf("\n---");
+	if (endIndex === -1) {
+		return { name: "Untitled", variables: [] };
+	}
+
+	const yamlBlock = afterFirst.slice(0, endIndex);
+
+	// Simple YAML parsing — extract name and variables without a full YAML parser.
+	// Name: first line matching "name: ..."
+	const nameMatch = yamlBlock.match(/^name:\s*"?([^"\n]+)"?\s*$/m);
+	const name = nameMatch?.[1]?.trim() ?? "Untitled";
+
+	// Variables: parse the YAML array manually.
+	// Each variable block starts with "  - name:" and subsequent indented lines.
+	const variables: Record<string, string>[] = [];
+	const varSection = yamlBlock.split(/^variables:\s*$/m)[1];
+
+	if (varSection) {
+		const entries = varSection.split(/\n\s{2}- /).filter(Boolean);
+		for (const entry of entries) {
+			const obj: Record<string, string> = {};
+			const lines = entry.split("\n");
+			for (const line of lines) {
+				const match = line.match(/^\s*(?:-\s+)?(\w+):\s*"?([^"\n]*)"?\s*$/);
+				if (match) {
+					obj[match[1]] = match[2].trim();
+				}
+			}
+			if (obj.name) variables.push(obj);
+		}
+	}
+
+	return { name, variables };
+}
 
 // ─── Singleton ───────────────────────────────────────────────────────────────
 let _db: Database | null = null;
@@ -16,15 +101,11 @@ export async function getDb(): Promise<Database> {
 	}
 	return _initPromise;
 }
-
 async function _initializeDb(): Promise<Database> {
-	const db = await Database.load("sqlite:licensor.db");
-
-	// Enable WAL mode — allows concurrent reads while writing.
-	// Default journal mode (DELETE) serializes everything behind a single lock.
-	await db.execute("PRAGMA journal_mode=WAL");
-
-	await runMigrations(db);
+	const db = await Database.load("sqlite:licensor.db"); // connection opens (SQLite file in app data dir)
+	await db.execute("PRAGMA journal_mode=WAL"); // enable concorrent reads
+	await runMigrations(db); // tables created
+	await seedBundledTemplates(db);  // reads bundled files via Rust command, inserts into existing tables (after migrations, tables exist)
 	_db = db;
 	return db;
 }

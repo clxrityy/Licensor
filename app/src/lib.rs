@@ -1,4 +1,5 @@
 mod commands;
+mod seed;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -7,6 +8,7 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
+        // No .setup() — seeding now happens frontend-side after migrations
         .invoke_handler(tauri::generate_handler![
             // Templates
             commands::templates::create_template,
@@ -37,6 +39,8 @@ pub fn run() {
             commands::metadata::delete_metadata,
             // Export
             commands::export::export_document,
+            // Seed
+            seed::load_bundled_templates,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
