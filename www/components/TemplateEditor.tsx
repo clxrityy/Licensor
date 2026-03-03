@@ -15,11 +15,11 @@ export default function TemplateEditor() {
 	// Find the template being edited (null = creating new)
 	const existing = templates.find((t) => t.id === templateId);
 
-	const [name, setName] = useState("");
-	const [content, setContent] = useState("");
+	const [name, setName] = useState<string>("");
+	const [content, setContent] = useState<string>("");
 	const [variables, setVariables] = useState<TemplateVariable[]>([]);
-	const [preview, setPreview] = useState("");
-	const [saving, setSaving] = useState(false);
+	const [preview, setPreview] = useState<string>("");
+	const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
 	// Populate fields when template loads
 	useEffect(() => {
@@ -28,7 +28,7 @@ export default function TemplateEditor() {
 			setContent(existing.content);
 			setVariables(existing.variables);
 		}
-	}, [existing]);
+	}, [existing?.id]);
 
 	// Live preview — debounced via a simple timeout.
 	// Falls back to raw content if the Rust command isn't available (e.g. running in browser).
@@ -73,7 +73,7 @@ export default function TemplateEditor() {
 
 	const handleSave = async () => {
 		if (!name.trim()) return;
-		setSaving(true);
+		setSaveState("saving");
 		try {
 			if (existing) {
 				await updateTemplate(existing.id, { name, content, variables });
@@ -81,10 +81,23 @@ export default function TemplateEditor() {
 				const id = await createTemplate(name, content, variables);
 				navigate(`/templates/${id}`, { replace: true });
 			}
-		} finally {
-			setSaving(false);
+			setSaveState("saved");
+			// Reset back to idle after 1.5s so the button returns to "Save"
+			setTimeout(() => setSaveState("idle"), 1500);
+		} catch (e) {
+			console.error("Save failed:", e);
+			setSaveState("idle");
 		}
 	};
+
+	const saveButtonText =
+		saveState === "saving"
+			? "Saving..."
+			: saveState === "saved"
+			? "Saved"
+			: saveState === "error"
+			? "Error"
+			: "Save Template";
 
 	return (
 		<div className="p-6 max-w-6xl">
@@ -101,11 +114,11 @@ export default function TemplateEditor() {
 				/>
 				<button
 					onClick={handleSave}
-					disabled={saving || !name.trim()}
+					disabled={saveState !== "idle" || !name.trim()}
 					className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md
                      hover:bg-blue-700 disabled:opacity-50 transition-colors"
 				>
-					{saving ? "Saving..." : "Save"}
+					{saveButtonText}
 				</button>
 			</div>
 
