@@ -27,8 +27,14 @@ export default function TemplateEditor() {
 			setName(existing.name);
 			setContent(existing.content);
 			setVariables(existing.variables);
+		} else {
+			// Clear form when creating a new template
+			setName("");
+			setContent("");
+			setVariables([]);
+			setPreview("");
 		}
-	}, [existing?.id]);
+	}, [existing?.id, templateId]);
 
 	// Live preview — debounced via a simple timeout.
 	// Falls back to raw content if the Rust command isn't available (e.g. running in browser).
@@ -83,10 +89,12 @@ export default function TemplateEditor() {
 			}
 			setSaveState("saved");
 			// Reset back to idle after 1.5s so the button returns to "Save"
-			setTimeout(() => setSaveState("idle"), 1500);
+			setTimeout(() => setSaveState("idle"), 5000);
 		} catch (e) {
 			console.error("Save failed:", e);
-			setSaveState("idle");
+			setSaveState("error");
+		} finally {
+			setTimeout(() => setSaveState("idle"), 5000);
 		}
 	};
 
@@ -97,7 +105,7 @@ export default function TemplateEditor() {
 			? "Saved"
 			: saveState === "error"
 			? "Error"
-			: "Save Template";
+			: "Save";
 
 	return (
 		<div className="p-6 max-w-6xl">
@@ -108,15 +116,12 @@ export default function TemplateEditor() {
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					placeholder="Template name..."
-					className="text-2xl font-bold bg-transparent border-b border-transparent
-                     hover:border-gray-300 focus:border-blue-500 focus:outline-none
-                     pb-1 w-full max-w-md"
+					className="text-2xl font-bold bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none pb-1 w-full max-w-md"
 				/>
 				<button
 					onClick={handleSave}
 					disabled={saveState !== "idle" || !name.trim()}
-					className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md
-                     hover:bg-blue-700 disabled:opacity-50 transition-colors"
+					className={`px-4 py-2 ${saveState === "error" ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700pho"} text-white text-sm rounded-md disabled:opacity-50 transition-colors`}
 				>
 					{saveButtonText}
 				</button>

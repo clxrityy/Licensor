@@ -64,7 +64,7 @@ export default function App() {
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/folders/:folderId" element={<FolderView />} />
-					<Route path="/templates/new" element={<TemplateEditor />} />
+					<Route path="/templates/new" element={<TemplateEditor key="new" />} />
 					<Route path="/templates/:templateId" element={<TemplateEditor />} />
 					<Route path="/templates/:templateId/generate" element={<GenerateDocument />} />
 					<Route path="/documents/:documentId" element={<DocumentView />} />
