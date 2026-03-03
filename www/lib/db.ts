@@ -2,17 +2,31 @@
 import Database from "@tauri-apps/plugin-sql";
 
 // ─── Singleton ───────────────────────────────────────────────────────────────
-// One DB connection for the lifetime of the app.
 let _db: Database | null = null;
+let _initPromise: Promise<Database> | null = null;
 
 export async function getDb(): Promise<Database> {
-	if (!_db) {
-		// "sqlite:licensor.db" is relative to the Tauri app data directory.
-		// Tauri resolves this to: $APPDATA/com.mjanglin.com.licensor/licensor.db
-		_db = await Database.load("sqlite:licensor.db");
-		await runMigrations(_db);
+	// Fast path: already initialized
+	if (_db) return _db;
+
+	// All concurrent callers share the same initialization promise.
+	// First caller creates it; subsequent callers just await it.
+	if (!_initPromise) {
+		_initPromise = _initializeDb();
 	}
-	return _db;
+	return _initPromise;
+}
+
+async function _initializeDb(): Promise<Database> {
+	const db = await Database.load("sqlite:licensor.db");
+
+	// Enable WAL mode — allows concurrent reads while writing.
+	// Default journal mode (DELETE) serializes everything behind a single lock.
+	await db.execute("PRAGMA journal_mode=WAL");
+
+	await runMigrations(db);
+	_db = db;
+	return db;
 }
 
 // ─── Migrations ──────────────────────────────────────────────────────────────
