@@ -1,5 +1,5 @@
 // www/hooks/useTemplates.ts
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery, useExecute } from "./useDatabase";
 import type { Template, TemplateVariable } from "../lib/types";
 
@@ -17,10 +17,13 @@ export function useTemplates(folderId?: string | null) {
 	const execute = useExecute();
 
 	// Templates come from SQLite with `variables` as a JSON string — parse it
-	const templates: Template[] = raw.map((t) => ({
-		...t,
-		variables: typeof t.variables === "string" ? JSON.parse(t.variables) : t.variables,
-	}));
+	const templates = useMemo(
+		() => raw.map((t) => ({
+			...t,
+			variables: typeof t.variables === "string" ? JSON.parse(t.variables) : t.variables,
+		})),
+		[raw]
+	);
 
 	const createTemplate = useCallback(
 		async (

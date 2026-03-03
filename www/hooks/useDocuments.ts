@@ -1,5 +1,5 @@
 // www/hooks/useDocuments.ts
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery, useExecute } from "./useDatabase";
 import type { Document } from "../lib/types";
 
@@ -30,13 +30,16 @@ export function useDocuments(filters?: { folderId?: string; templateId?: string 
 	const execute = useExecute();
 
 	// Parse variable_values from JSON string
-	const documents: Document[] = raw.map((d) => ({
-		...d,
-		variable_values:
-			typeof d.variable_values === "string"
-				? JSON.parse(d.variable_values)
-				: d.variable_values,
-	}));
+	const documents = useMemo(
+		() => raw.map((d) => ({
+			...d,
+			variable_values:
+				typeof d.variable_values === "string"
+					? JSON.parse(d.variable_values)
+					: d.variable_values,
+		})),
+		[raw]
+	);
 
 	const createDocument = useCallback(
 		async (
