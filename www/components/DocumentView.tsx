@@ -108,7 +108,7 @@ export default function DocumentView() {
 					<div className="mt-2 p-3 bg-gray-100 rounded-md text-xs font-mono space-y-1">
 						{Object.entries(doc.variable_values).map(([k, v]) => (
 							<div key={k}>
-								<span className="text-gray-500">{k}:</span> {v}
+								<span className="text-gray-500">{k}:</span> {String(v)}
 							</div>
 						))}
 					</div>
