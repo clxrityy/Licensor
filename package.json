@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "clean": "rm -rf app/target",
+    "clean:db": "rm ~/Library/Application\\ Support/com.mjanglin.licensor/licensor.db"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
