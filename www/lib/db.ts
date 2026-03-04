@@ -61,14 +61,10 @@ function parseFrontmatter(content: string): { name: string; variables: unknown[]
 	// Everything after the closing "---" delimiter, trimmed of leading newlines
 	const body = afterFirst.slice(endIndex + 4).replace(/^\n+/, "");
 
-
-	// Simple YAML parsing — extract name and variables without a full YAML parser.
-	// Name: first line matching "name: ..."
+	// ...rest of existing name/variable parsing stays the same...
 	const nameMatch = yamlBlock.match(/^name:\s*"?([^"\n]+)"?\s*$/m);
 	const name = nameMatch?.[1]?.trim() ?? "Untitled";
 
-	// Variables: parse the YAML array manually.
-	// Each variable block starts with "  - name:" and subsequent indented lines.
 	const variables: Record<string, string>[] = [];
 	const varSection = yamlBlock.split(/^variables:\s*$/m)[1];
 
