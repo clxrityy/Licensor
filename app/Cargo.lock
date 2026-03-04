@@ -9,6 +9,7 @@ dependencies = [
  "chrono",
  "comrak",
  "minijinja",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",

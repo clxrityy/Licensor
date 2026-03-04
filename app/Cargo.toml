@@ -31,5 +31,4 @@ uuid = { version = "1.21.0", features = ["v4"] }
 chrono = { version = "0.4.44", features = ["serde"] }
 serde_yaml = "0.9.34"
 rusqlite = { version = "0.32", features = ["bundled"] }
-
-
+regex = "1"
