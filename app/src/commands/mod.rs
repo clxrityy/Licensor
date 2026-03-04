@@ -11,14 +11,14 @@ use rusqlite::Connection;
 use tauri::Manager;
 
 /// Returns the path to the app's SQLite database.
-/// tauri-plugin-sql stores it at: $APP_DATA/<identifier>/db.sqlite
+/// tauri-plugin-sql stores it at: $APP_DATA/<identifier>/licensor.db
 /// We open the same file so both Rust commands and JS frontend share one DB.
 fn db_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let data_dir = app
         .path()
         .app_data_dir()
         .map_err(|e| format!("Failed to resolve app data dir: {e}"))?;
-    Ok(data_dir.join("db.sqlite"))
+    Ok(data_dir.join("licensor.db"))  // Must match the frontend: Database.load("sqlite:licensor.db")
 }
 
 /// Opens a rusqlite connection to the shared SQLite database.
