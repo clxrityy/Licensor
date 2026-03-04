@@ -1,5 +1,5 @@
 ---
-name: "Commercial License Agreement"
+name: "Commercial Agreement"
 description: "Non-exclusive agreement for licensing commercial use of audio content."
 variables:
   - name: date
