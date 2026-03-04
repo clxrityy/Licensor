@@ -6,6 +6,7 @@ import SearchResults from "./components/SearchResults";
 import DocumentView from "./components/DocumentView";
 import TemplateEditor from "./components/TemplateEditor";
 import GenerateDocument from "./components/GenerateDocument";
+import "./styles/global.css";
 
 // Placeholder pages — will be replaced with real components
 function Home() {
