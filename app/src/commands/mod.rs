@@ -4,6 +4,7 @@ pub mod folders;
 pub mod attachments;
 pub mod export;
 pub mod metadata;
+pub mod preview;
 
 use std::path::PathBuf;
 use rusqlite::Connection;

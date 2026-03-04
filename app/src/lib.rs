@@ -39,6 +39,8 @@ pub fn run() {
             commands::metadata::delete_metadata,
             // Export
             commands::export::export_document,
+            // Preview
+            commands::preview::render_preview,
             // Seed
             seed::load_bundled_templates,
         ])
