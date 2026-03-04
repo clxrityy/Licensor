@@ -48,23 +48,23 @@ variables:
 
 THIS LICENSE AGREEMENT is made today on {{ date }} (“Effective Date”) by and between {{ licensee }} (hereinafter referred to as “Licensee”) and {{ licensor }} (hereinafter referred to as the “Licensor”). This agreement grants the Licensee non-exclusive rights to the audio content titled “{{ audio_title }}”.
 
-USAGE
+## USAGE
 
 The Licensor hereby grants the Licensee the right to record instrumental and/or audio content synchronization to any or all parts of the audio content. The Licensee and Licensor understand that the non-exclusive usage of the audio content is not limited to any number of composition(s) and if the Licensee wishes to use the audio content in other new compositions, then they are granted to do so. The Licensee also acknowledges they are permitted to edit, program, and alter any and every aspect of the audio content as they wish.
 
-PROFIT DISTRIBUTION
+### PROFIT DISTRIBUTION
 
 The Licensee is permitted to distribute the final composition containing the audio content for commercial use, up to a maximum of {{ distribution_limit }} units. The Licensor requires no additional fees or royalties for distribution up to this limit. If the Licensee wishes to distribute more than {{ distribution_limit }} units, they must contact the Licensor to negotiate additional licensing terms and fees.
 
-OWNERSHIP
+### OWNERSHIP
 
 The Licensor maintains 100% full rights (copyright and ownership) of the audio content, and can continue to sell it non-exclusively. The Licensee has neither the right nor authority to sell or license the rights to the recording whether in whole or part to any other party.
 
-CREDIT
+#### CREDIT
 
 {{ credit }}
 
-CONFIRMATIONS
+##### CONFIRMATIONS
 
 Agreed price: {{ license_fee }} USD
 License renewlal term: {{ renewal_term }} months
@@ -72,4 +72,4 @@ The Licensee has the right to question and request any revision of the terms wit
 License ID: {{ ID }}
 The Licensee and Licensor agree upon the terms stated above.
 
-By means of sending or receiving this agreement, the Licensee is granted non-exclusive rights to use the audio content as outlined herein.
+*By means of sending or receiving this agreement, the Licensee is granted non-exclusive rights to use the audio content as outlined herein.*
