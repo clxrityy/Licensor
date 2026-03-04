@@ -31,32 +31,36 @@ async function seedBundledTemplates(db: Database): Promise<void> {
 	console.log(`[seed] Loading ${templates.length} bundled templates`);
 
 	for (const tpl of templates) {
-		const { name, variables } = parseFrontmatter(tpl.content);
+		const { name, variables, body } = parseFrontmatter(tpl.content);
 		const id = crypto.randomUUID();
 
 		await db.execute(
 			"INSERT INTO templates (id, folder_id, name, content, variables) VALUES (?, NULL, ?, ?, ?)",
-			[id, name, tpl.content, JSON.stringify(variables)]
+			[id, name, body, JSON.stringify(variables)]  // store body only, not full file
 		);
 
 		console.log(`[seed] Loaded: ${name}`);
 	}
 }
 
-/** Extract name and variables from YAML frontmatter between --- delimiters */
-function parseFrontmatter(content: string): { name: string; variables: unknown[] } {
+/** Extract name, variables, and body (sans frontmatter) from a bundled template file */
+function parseFrontmatter(content: string): { name: string; variables: unknown[]; body: string } {
 	const trimmed = content.trimStart();
 	if (!trimmed.startsWith("---")) {
-		return { name: "Untitled", variables: [] };
+		return { name: "Untitled", variables: [], body: content };
 	}
 
 	const afterFirst = trimmed.slice(3);
 	const endIndex = afterFirst.indexOf("\n---");
 	if (endIndex === -1) {
-		return { name: "Untitled", variables: [] };
+		return { name: "Untitled", variables: [], body: content };
 	}
 
 	const yamlBlock = afterFirst.slice(0, endIndex);
+
+	// Everything after the closing "---" delimiter, trimmed of leading newlines
+	const body = afterFirst.slice(endIndex + 4).replace(/^\n+/, "");
+
 
 	// Simple YAML parsing — extract name and variables without a full YAML parser.
 	// Name: first line matching "name: ..."
@@ -83,7 +87,7 @@ function parseFrontmatter(content: string): { name: string; variables: unknown[]
 		}
 	}
 
-	return { name, variables };
+	return { name, variables, body };
 }
 
 // ─── Singleton ───────────────────────────────────────────────────────────────
