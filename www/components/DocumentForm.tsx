@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
-import { useDocuments } from "../hooks/useDocuments";
+// import { useDocuments } from "../hooks/useDocuments";
 import type { Template } from "../lib/types";
 
 interface DocumentFormProps {
@@ -13,7 +13,7 @@ interface DocumentFormProps {
 
 export default function DocumentForm({ template }: DocumentFormProps) {
 	const navigate = useNavigate();
-	const { createDocument } = useDocuments();
+	// const { createDocument } = useDocuments();
 	const [title, setTitle] = useState(`${template.name} — ${new Date().toLocaleDateString()}`);
 	const [generating, setGenerating] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function DocumentForm({ template }: DocumentFormProps) {
 	};
 
 	const handleGenerate = async () => {
-		// Check required fields
+		// Validate required fields
 		for (const v of template.variables) {
 			if (v.required && !values[v.name]?.trim()) {
 				setError(`"${v.label}" is required`);
@@ -44,21 +44,15 @@ export default function DocumentForm({ template }: DocumentFormProps) {
 		setError(null);
 
 		try {
-			// Rust backend runs minijinja substitution on the template content
-			const rendered = await invoke<string>("render_template", {
-				templateContent: template.content,
-				variables: values,
+			// Single Rust command: renders via minijinja + persists to SQLite
+			const doc = await invoke<{ id: string }>("create_document_from_template", {
+				templateId: template.id,
+				title,
+				variableValues: values,
+				folderId: template.folder_id ?? null,
 			});
 
-			const docId = await createDocument(
-				template.id,
-				template.folder_id,
-				title,
-				rendered,
-				values
-			);
-
-			navigate(`/documents/${docId}`);
+			navigate(`/documents/${doc.id}`);
 		} catch (e) {
 			setError(String(e));
 		} finally {
