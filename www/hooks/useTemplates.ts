@@ -3,11 +3,35 @@ import { useCallback, useMemo } from "react";
 import { useQuery, useExecute } from "./useDatabase";
 import type { Template, TemplateVariable } from "../lib/types";
 
+type TemplateHookReturn = {
+	templates: Template[];
+	loading: boolean;
+	error: Error | null;
+	refetch: () => Promise<void>;
+	createTemplate: (
+		name: string,
+		content: string,
+		variables: TemplateVariable[],
+		folderId?: string | null
+	) => Promise<string>;
+	updateTemplate: (
+		id: string,
+		updates: {
+			name?: string;
+			content?: string;
+			variables?: TemplateVariable[];
+			folderId?: string | null;
+		}
+	) => Promise<void>;
+	deleteTemplate: (id: string) => Promise<void>;
+	cloneTemplate: (id: string) => Promise<string>;
+}
+
 /**
  * CRUD hook for templates.
  * Optionally filter by folder — pass folderId to scope the query.
  */
-export function useTemplates(folderId?: string | null) {
+export function useTemplates(folderId?: string | null): TemplateHookReturn {
 	const query = folderId
 		? "SELECT * FROM templates WHERE folder_id = ? ORDER BY name ASC"
 		: "SELECT * FROM templates ORDER BY name ASC";
