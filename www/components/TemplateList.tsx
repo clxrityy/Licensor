@@ -3,6 +3,10 @@
 // Entry point for creating, cloning, or opening a template.
 import { Link } from "react-router-dom";
 import { useTemplates } from "../hooks/useTemplates";
+import { TbFilePlus } from "react-icons/tb";
+import { FaRegClone } from "react-icons/fa6";
+import { MdOutlineDelete } from "react-icons/md";
+import { Tooltip, VariablePills } from "./ui";
 
 interface TemplateListProps {
 	folderId?: string;
@@ -48,45 +52,42 @@ export default function TemplateList({ folderId }: TemplateListProps) {
 						</td>
 						<td className="py-2 text-gray-500">
 							{/* Inline-flex keeps pills on a single row; flex-wrap lets them wrap if needed */}
-							<div className="flex flex-wrap gap-1">
-								{t.variables.map((v) => (
-									<span
-										key={v.name}
-										className="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs"
-									>
-										{v.name}
-									</span>
-								))}
-							</div>
+							<VariablePills variables={t.variables} limit={3} />
 						</td>
 						<td className="py-2 text-gray-500">
 							{new Date(t.updated_at).toLocaleDateString()}
 						</td>
 						<td className="py-2">
-							<div className="flex flex-wrap items-center gap-2">
-								<Link
-									to={`/templates/${t.id}/generate`}
-									className="text-gray-500 hover:text-green-600 text-xs"
-									title="Generate document from template"
-								>
-									Generate
-								</Link>
-								<button
-									onClick={() => cloneTemplate(t.id)}
-									className="text-gray-500 hover:text-blue-600 text-xs"
-									title="Clone template"
-								>
-									Clone
-								</button>
-								<button
-									onClick={() => {
-										if (confirm(`Delete "${t.name}"?`)) deleteTemplate(t.id);
-									}}
-									className="text-gray-500 hover:text-red-600 text-xs"
-									title="Delete template"
-								>
-									Delete
-								</button>
+							<div className="flex flex-wrap items-center gap-4 justify-center *:cursor-pointer lg:flex-row sm:gap-2">
+								<Tooltip text="Generate document">
+									<Link
+										to={`/templates/${t.id}/generate`}
+										className="text-gray-500 hover:text-green-600 text-xs px-3 py-2 rounded-md border border-gray-500 hover:border-green-600 bg-gray-500/10 hover:bg-green-600/10 flex-1 inline-flex items-center justify-center"
+									>
+										<TbFilePlus />
+										<span className="sr-only">Generate document</span>
+									</Link>
+								</Tooltip>
+								<Tooltip text="Clone">
+									<button
+										onClick={() => cloneTemplate(t.id)}
+										className="text-gray-500 hover:text-blue-600 text-xs px-3 py-2 rounded-md border border-gray-500 hover:border-blue-600 bg-gray-500/10 hover:bg-blue-600/10"
+									>
+										<FaRegClone />
+										<span className="sr-only">Clone template</span>
+									</button>
+								</Tooltip>
+								<Tooltip text={`Delete "${t.name}"`}>
+									<button
+										onClick={() => {
+											if (confirm(`Delete "${t.name}"?`)) deleteTemplate(t.id);
+										}}
+										className="text-gray-500 hover:text-red-600 text-xs px-3 py-2 rounded-md border border-gray-500 hover:border-red-600 bg-gray-500/10 hover:bg-red-600/10"
+									>
+										<MdOutlineDelete />
+										<span className="sr-only">Delete template</span>
+									</button>
+								</Tooltip>
 							</div>
 						</td>
 					</tr>
