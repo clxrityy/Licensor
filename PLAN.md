@@ -164,7 +164,7 @@ www/
 
 ---
 
-## 7. Template format convention
+## 7. Template format convention **[✓]**
 
 Templates are Markdown files with YAML frontmatter:
 
@@ -193,7 +193,7 @@ The frontmatter `variables` array drives form UI - labels, types, defaults defin
 
 ---
 
-## 8. Pre-defined templates
+## 8. Pre-defined templates **[✓]**
 
 Bundle 3-5 starter templates via Tauri's resource system (`tauri.conf.json` → `bundle.resources`). On first launch, insert into SQLite if not present.
 
