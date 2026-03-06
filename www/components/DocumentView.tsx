@@ -33,20 +33,24 @@ export default function DocumentView() {
 		})();
 	}, [doc]);
 
-	// Export: get rendered content from Rust, let user pick file location
+	// Export the rendered document to a user-selected file.
+	// We sanitize the suggested file name so titles do not create invalid paths.
 	const handleExport = async (format: "md" | "txt") => {
 		if (!doc) return;
+
 		setExporting(true);
 		try {
-			// Ask Rust backend for the export content (strips frontmatter, etc.)
 			const content = await invoke<string>("export_document", {
 				documentId: doc.id,
 				format,
 			});
 
-			// Open native save dialog
+			// Replace characters that are invalid in common file systems.
+			const safeBaseName =
+				(doc.title || "document").replace(/[<>:"/\\|?*\x00-\x1F]/g, "-").trim() || "document";
+
 			const path = await save({
-				defaultPath: `${doc.title}.${format}`,
+				defaultPath: `${safeBaseName}.${format}`,
 				filters: [
 					{
 						name: format === "md" ? "Markdown" : "Text",
@@ -55,9 +59,10 @@ export default function DocumentView() {
 				],
 			});
 
-			if (path) {
-				await writeTextFile(path, content);
-			}
+			// User cancelled the dialog; nothing to do.
+			if (!path) return;
+
+			await writeTextFile(path, content);
 		} catch (e) {
 			console.error("Export failed:", e);
 		} finally {

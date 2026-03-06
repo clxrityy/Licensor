@@ -4,25 +4,13 @@ use super::open_db;
 
 // ─── Commands ───────────────────────────────────────────────────────────────
 
-/// Exports a document's rendered content as a string.
-///
-/// The `format` parameter controls output:
-///   - "md"  → returns rendered_content as-is (already markdown)
-///   - "txt" → strips any remaining markdown syntax for plain text
-///
-/// The frontend handles the actual file-writing workflow:
-///   1. Calls export_document to get the string
-///   2. Opens a save dialog via tauri-plugin-dialog
-///   3. Writes to disk via tauri-plugin-fs
-///
-/// Why not do file I/O in Rust?
-///   - The save dialog plugin returns a path to JS, not Rust
-///   - Keeping export as "data out" makes it testable without filesystem mocking
-///   - The frontend already has plugin-fs wired up for attachments
+// Exports a document's rendered content as either markdown or plain text.
+// `document_id` intentionally matches the frontend's `documentId` payload via
+// Tauri's snake_case <-> camelCase argument mapping.
 #[tauri::command]
 pub fn export_document(
     app: AppHandle,
-    id: String,
+    document_id: String,
     format: String,
 ) -> Result<String, String> {
     let conn = open_db(&app)?;
@@ -30,7 +18,7 @@ pub fn export_document(
     let rendered: String = conn
         .query_row(
             "SELECT rendered_content FROM documents WHERE id = ?1",
-            rusqlite::params![id],
+            rusqlite::params![document_id],
             |row| row.get(0),
         )
         .map_err(|e| format!("Document not found: {e}"))?;
