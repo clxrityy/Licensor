@@ -1,9 +1,5 @@
 name: CI
 
-permissions:
-  contents: read
-  checks: write
-
 on:
   push:
     branches: [master]
