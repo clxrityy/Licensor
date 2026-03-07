@@ -20,7 +20,7 @@ jobs:
         with:
           version: 9
 
-      - uses: actions-rust-lang/setup-rust@v1
+      - uses: dtolnay/rust-toolchain@stable
 
       - name: Install dependencies
         run: pnpm install
