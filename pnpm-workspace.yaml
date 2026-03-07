@@ -1,2 +1,6 @@
+packages:
+  - 'www'
+  - 'app'
+
 onlyBuiltDependencies:
   - esbuild
