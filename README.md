@@ -6,6 +6,10 @@ A desktop app for managing document templates with variable substitution, render
 
 ---
 
+- [Contributing](.github/CONTRIBUTING.md)
+- [GNU GPLv3 License](LICENSE)
+
+
 Base templates are stored in the [`templates/`](app/templates/) directory as Markdown files with YAML front matter defining the template name, description, and variables. See [example.md](app/templates/example.md) and [commercial.md](app/templates/commercial.md) for reference.
 
 ## Examples & References
@@ -51,7 +55,3 @@ Base templates are stored in the [`templates/`](app/templates/) directory as Mar
 - This can be for organizational purposes or to store additional information.
 
 <img src=".github/img/example_metadata.png" alt="Template Metadata Screenshot" width="400" />
-
----
-
-[GNU GPLv3 License](LICENSE)
