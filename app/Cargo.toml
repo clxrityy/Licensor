@@ -1,6 +1,6 @@
 [package]
 name = "Licensor"
-version = "0.2.0" # x-release-please-version
+version = "0.3.0" # x-release-please-version
 description = "A Tauri-based document template manager and renderer"
 authors = ["MJ Anglin <contact@mjanglin.com>"]
 edition = "2021"
