@@ -1,5 +1,7 @@
 # Licensor
 
+<img src="https://img.shields.io/github/actions/workflow/status/clxrityy/licensor/ci.yml?style=plastic&label=CI" alt="GitHub Actions Workflow Status" />
+
 A desktop app for managing document templates with variable substitution, rendering, and export capabilities.
 
 <img src=".github/img/example.png" alt="Licensor App Screenshot" width="600" />
@@ -8,7 +10,6 @@ A desktop app for managing document templates with variable substitution, render
 
 - [Contributing](.github/CONTRIBUTING.md)
 - [GNU GPLv3 License](LICENSE)
-
 
 Base templates are stored in the [`templates/`](app/templates/) directory as Markdown files with YAML front matter defining the template name, description, and variables. See [example.md](app/templates/example.md) and [commercial.md](app/templates/commercial.md) for reference.
 
