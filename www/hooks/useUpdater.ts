@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useState } from 'react';
-import { check } from '@tauri-apps/plugin-updater';
+import { useEffect, useCallback, useState, useRef } from 'react';
+import { check, type Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
 
 export interface UpdateStatus {
@@ -9,29 +9,21 @@ export interface UpdateStatus {
 	installing: boolean;
 }
 
-/**
- * Hook for checking and managing app updates.
- * Automatically checks for updates on mount, then provides methods
- * to install or dismiss the update banner.
- *
- * Usage:
- *   const { available, version, install, dismiss } = useUpdater();
- *   if (available) {
- *     return <UpdateBanner onInstall={install} onDismiss={dismiss} version={version} />;
- *   }
- */
 export function useUpdater() {
 	const [status, setStatus] = useState<UpdateStatus>({
 		available: false,
 		installing: false,
 	});
 
-	// Check for updates on component mount
+	// Hold the Update object so install() can call downloadAndInstall() on it
+	const updateRef = useRef<Update | null>(null);
+
 	useEffect(() => {
 		const checkForUpdates = async () => {
 			try {
 				const update = await check();
-				if (update != null) {
+				if (update) {
+					updateRef.current = update;
 					setStatus({
 						available: true,
 						version: update.version,
@@ -39,25 +31,25 @@ export function useUpdater() {
 					});
 				}
 			} catch (error) {
-				// Network error, no internet, or plugin disabled — not a critical failure
 				console.warn('Failed to check for updates:', error);
-				setStatus((prev) => ({
-					...prev,
-					error: String(error),
-				}));
+				setStatus((prev) => ({ ...prev, error: String(error) }));
 			}
 		};
 
 		checkForUpdates();
 	}, []);
 
-	// Install the update and restart
 	const install = useCallback(async () => {
+		const update = updateRef.current;
+		if (!update) return;
+
 		try {
 			setStatus((prev) => ({ ...prev, installing: true }));
 
-			// The updater plugin handles download + install
-			// After install completes, we relaunch the app
+			// Downloads the binary, verifies signature against pubkey, writes to disk
+			await update.downloadAndInstall();
+
+			// Restart the app to apply the update
 			await relaunch();
 		} catch (error) {
 			console.error('Failed to install update:', error);
@@ -69,12 +61,8 @@ export function useUpdater() {
 		}
 	}, []);
 
-	// Dismiss the update notification (user chooses "later")
 	const dismiss = useCallback(() => {
-		setStatus((prev) => ({
-			...prev,
-			available: false,
-		}));
+		setStatus((prev) => ({ ...prev, available: false }));
 	}, []);
 
 	return {
