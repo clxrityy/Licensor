@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+
+# release-please needs write access to create PRs, releases, and tags
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # ──────────────────────────────────────────────────────────
+  # Job 1: release-please analyzes conventional commits and
+  # either opens/updates a "Release PR" or, when that PR is
+  # merged, creates a git tag + GitHub Release.
+  # ──────────────────────────────────────────────────────────
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ──────────────────────────────────────────────────────────
+  # Job 2: Only runs when release-please actually created a
+  # new release (i.e., the release PR was merged).
+  # Builds the Tauri app on all 3 platforms in parallel,
+  # then uploads artifacts to the GitHub Release.
+  # ──────────────────────────────────────────────────────────
+  build:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    strategy:
+      fail-fast: false  # Don't cancel other platforms if one fails
+      matrix:
+        include:
+          # macOS — builds a universal binary (aarch64 + x86_64)
+          - platform: macos-latest
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+          # Linux — x86_64 .deb and .AppImage
+          - platform: ubuntu-22.04
+            args: ''
+            rust-targets: ''
+          # Windows — x86_64 .msi and NSIS .exe
+          - platform: windows-latest
+            args: ''
+            rust-targets: ''
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # On macOS, install both arch targets for the universal binary
+          targets: ${{ matrix.rust-targets }}
+
+      # Linux requires system libraries for WebKitGTK and AppIndicator
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # tauri-action: builds the app, signs update artifacts,
+      # and uploads everything to the GitHub Release
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Updater signing keys — the private key signs the update bundle
+          # so the app can verify it hasn't been tampered with
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          # Attach artifacts to the release that release-please created
+          tagName: ${{ needs.release-please.outputs.tag_name }}
+          releaseName: 'Licensor ${{ needs.release-please.outputs.tag_name }}'
+          args: ${{ matrix.args }}
