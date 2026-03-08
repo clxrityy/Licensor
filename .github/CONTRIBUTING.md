@@ -21,7 +21,7 @@ cd licensor
 pnpm install
 
 # Development server (starts both dev server + Tauri desktop app)
-pnpm dev
+pnpm tauri dev
 
 # Build for production (generates dist/ + Tauri binary)
 pnpm build
