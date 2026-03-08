@@ -6,6 +6,8 @@ import SearchResults from "./components/SearchResults";
 import DocumentView from "./components/DocumentView";
 import TemplateEditor from "./components/TemplateEditor";
 import GenerateDocument from "./components/GenerateDocument";
+import { UpdateBanner } from "./components/UpdateBanner";
+import { useUpdater } from "./hooks/useUpdater";
 import "./styles/global.css";
 
 // Placeholder pages — will be replaced with real components
@@ -55,24 +57,35 @@ function NotFound() {
 }
 
 export default function App() {
-	return (
-		// Full-height flex layout: sidebar fixed-width, content fills remaining space
-		<div className="flex h-screen bg-gray-50 text-gray-900">
-			<Sidebar />
+	const { available, version, installing, install, dismiss } = useUpdater();
 
-			{/* Main content area — scrollable independently of sidebar */}
-			<main className="flex-1 overflow-y-auto">
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/folders/:folderId" element={<FolderView />} />
-					<Route path="/templates/new" element={<TemplateEditor key="new" />} />
-					<Route path="/templates/:templateId" element={<TemplateEditor />} />
-					<Route path="/templates/:templateId/generate" element={<GenerateDocument />} />
-					<Route path="/documents/:documentId" element={<DocumentView />} />
-					<Route path="/search" element={<SearchPage />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</main>
+	return (
+		<div className="flex flex-col h-screen bg-gray-50 text-gray-900">
+			{/* Update banner — renders above the app layout when an update exists */}
+			{available && version && (
+				<UpdateBanner
+					version={version}
+					onInstall={install}
+					onDismiss={dismiss}
+					installing={installing}
+				/>
+			)}
+
+			<div className="flex flex-1 overflow-hidden">
+				<Sidebar />
+				<main className="flex-1 overflow-y-auto">
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/folders/:folderId" element={<FolderView />} />
+						<Route path="/templates/new" element={<TemplateEditor key="new" />} />
+						<Route path="/templates/:templateId" element={<TemplateEditor />} />
+						<Route path="/templates/:templateId/generate" element={<GenerateDocument />} />
+						<Route path="/documents/:documentId" element={<DocumentView />} />
+						<Route path="/search" element={<SearchPage />} />
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</main>
+			</div>
 		</div>
 	);
 }
