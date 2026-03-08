@@ -1,15 +1,38 @@
 # Licensor
 
-<img src="https://img.shields.io/github/actions/workflow/status/clxrityy/licensor/ci.yml?style=plastic&label=CI" alt="GitHub Actions Workflow Status" />
+<div style="display: flex; gap: 10px; align-items: center;">
+  <img src="https://img.shields.io/github/actions/workflow/status/clxrityy/licensor/ci.yml?style=plastic&label=CI" alt="GitHub Actions Workflow Status" />
+  <img src="https://img.shields.io/github/v/tag/clxrityy/licensor?filter=*&style=plastic&label=latest" alt="latest release" />
+</div>
+
+<br />
 
 A desktop app for managing document templates with variable substitution, rendering, and export capabilities.
 
+**Supported platforms:**
+
+<div style="display: flex; gap: 10px; align-items: center;">
+  <a href="https://github.com/clxrityy/licensor/releases/latest">
+  <img src="https://img.shields.io/badge/Windows-0078D6?style=plastic&logo=windows&logoColor=white" alt="Windows" />
+</a>
+<a href="https://github.com/clxrityy/licensor/releases/latest">
+  <img src="https://img.shields.io/badge/macOS-000000?style=plastic&logo=apple&logoColor=white" alt="macOS" />
+</a>
+<a href="https://github.com/clxrityy/licensor/releases/latest">
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=plastic&logo=linux&logoColor=black" alt="Linux" />
+</a>
+</div>
+
+<br />
+
 <img src=".github/img/example.png" alt="Licensor App Screenshot" width="600" />
 
----
+<br />
 
 - [Contributing](.github/CONTRIBUTING.md)
 - [GNU GPLv3 License](LICENSE)
+
+---
 
 Base templates are stored in the [`templates/`](app/templates/) directory as Markdown files with YAML front matter defining the template name, description, and variables. See [example.md](app/templates/example.md) and [commercial.md](app/templates/commercial.md) for reference.
 
