@@ -1,13 +1,13 @@
-pub mod templates;
-pub mod documents;
-pub mod folders;
 pub mod attachments;
+pub mod documents;
 pub mod export;
+pub mod folders;
 pub mod metadata;
 pub mod preview;
+pub mod templates;
 
-use std::path::PathBuf;
 use rusqlite::Connection;
+use std::path::PathBuf;
 use tauri::Manager;
 
 /// Returns the path to the app's SQLite database.
@@ -18,7 +18,7 @@ fn db_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
         .path()
         .app_data_dir()
         .map_err(|e| format!("Failed to resolve app data dir: {e}"))?;
-    Ok(data_dir.join("licensor.db"))  // Must match the frontend: Database.load("sqlite:licensor.db")
+    Ok(data_dir.join("licensor.db")) // Must match the frontend: Database.load("sqlite:licensor.db")
 }
 
 /// Opens a rusqlite connection to the shared SQLite database.

@@ -192,10 +192,7 @@ pub fn delete_document(app: AppHandle, id: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn list_documents(
-    app: AppHandle,
-    folder_id: Option<String>,
-) -> Result<Vec<Document>, String> {
+pub fn list_documents(app: AppHandle, folder_id: Option<String>) -> Result<Vec<Document>, String> {
     let conn = open_db(&app)?;
     let mut docs = Vec::new();
 

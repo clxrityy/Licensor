@@ -94,8 +94,7 @@ fn extract_variables(content: &str) -> Result<String, String> {
         None => Vec::new(), // No frontmatter = no variables
     };
 
-    serde_json::to_string(&variables)
-        .map_err(|e| format!("Failed to serialize variables: {e}"))
+    serde_json::to_string(&variables).map_err(|e| format!("Failed to serialize variables: {e}"))
 }
 
 // ─── Commands ───────────────────────────────────────────────────────────────
@@ -190,10 +189,7 @@ pub fn delete_template(app: AppHandle, id: String) -> Result<(), String> {
 /// Returns all templates, optionally filtered by folder_id.
 /// If folder_id is None, returns ALL templates across all folders.
 #[tauri::command]
-pub fn list_templates(
-    app: AppHandle,
-    folder_id: Option<String>,
-) -> Result<Vec<Template>, String> {
+pub fn list_templates(app: AppHandle, folder_id: Option<String>) -> Result<Vec<Template>, String> {
     let conn = open_db(&app)?;
 
     let mut templates = Vec::new();
