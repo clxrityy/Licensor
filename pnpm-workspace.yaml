@@ -2,5 +2,8 @@ packages:
   - 'www'
   - 'app'
 
+allowBuilds:
+  esbuild: true
+
 onlyBuiltDependencies:
   - esbuild
