@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/clxrityy/Licensor/compare/v0.3.0...v0.3.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* update readme ([6032c8b](https://github.com/clxrityy/Licensor/commit/6032c8b526df614e8c296f67d0489d6851d9655b))
+
 ## [0.3.0](https://github.com/clxrityy/Licensor/compare/v0.2.0...v0.3.0) (2026-03-08)
 
 
