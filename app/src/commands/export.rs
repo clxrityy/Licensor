@@ -164,6 +164,14 @@ pub fn export_document_bundle(app: AppHandle, document_id: String) -> Result<Vec
 
         let file_path = app_data_dir.join(&relative_path);
 
+        let canonical = file_path.canonicalize().map_err(|e| e.to_string())?;
+
+        let canonical_root = app_data_dir.canonicalize().map_err(|e| e.to_string())?;
+
+        if !canonical.starts_with(&canonical_root) {
+            return Err(format!("Invalid attachment path: {}", relative_path));
+        }
+
         if !file_path.exists() {
             continue;
         }
