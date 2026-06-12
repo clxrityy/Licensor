@@ -69,9 +69,8 @@ Base templates are stored in the [`templates/`](app/templates/) directory as Mar
 
 ##### Exporting a document
 
-- You can download the rendered document in either `.md` (Markdown) or `.txt` (Plain Text) formats.
-
-<img src=".github/img/example_download.png" alt="Document Export Gif" width="300" />
+- You can export the rendered document as a `.md` or `.txt` file.
+- You can also export the entire `.zip` containing the rendered document and any associated metadata/files.
 
 ##### Documents can have metadata/files
 
