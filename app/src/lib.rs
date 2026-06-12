@@ -40,6 +40,7 @@ pub fn run() {
             commands::metadata::delete_metadata,
             // Export
             commands::export::export_document,
+            commands::export::export_document_bundle,
             // Preview
             commands::preview::render_preview,
             // Seed

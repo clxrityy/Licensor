@@ -9,6 +9,7 @@ import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { useDocuments } from "../hooks/useDocuments";
 import AttachmentPanel from "./AttachmentPanel";
 import MetadataPanel from "./MetadataPanel";
+import { exportZipToFile } from "../lib/exportZip";
 
 export default function DocumentView() {
 	const { documentId } = useParams();
@@ -70,6 +71,20 @@ export default function DocumentView() {
 		}
 	};
 
+	const handleExportZip = async () => {
+		if (!doc) return;
+
+		setExporting(true);
+
+		try {
+			await exportZipToFile(doc)
+		} catch (e) {
+			console.error("Export failed:", e);
+		} finally {
+			setExporting(false);
+		}
+	}
+
 	if (loading) return <p className="p-6 text-sm text-gray-500">Loading...</p>;
 	if (!doc) return <p className="p-6 text-sm text-red-500">Document not found</p>;
 
@@ -78,23 +93,33 @@ export default function DocumentView() {
 			{/* Header */}
 			<div className="flex items-center justify-between mb-6">
 				<h2 className="text-2xl font-bold">{doc.title}</h2>
-				<div className="flex gap-2">
+				<div className="flex flex-col gap-1 items-end sm:flex-row sm:gap-2">
 					<button
-						onClick={() => handleExport("md")}
+						onClick={handleExportZip}
 						disabled={exporting}
 						className="px-3 py-1.5 text-sm border border-gray-300 rounded-md
                        hover:bg-gray-50 disabled:opacity-50 transition-colors"
 					>
-						Download .md
+						Download .zip
 					</button>
-					<button
-						onClick={() => handleExport("txt")}
-						disabled={exporting}
-						className="px-3 py-1.5 text-sm border border-gray-300 rounded-md
+					<div className="flex gap-2">
+						<button
+							onClick={() => handleExport("md")}
+							disabled={exporting}
+							className="px-3 py-1.5 text-sm border border-gray-300 rounded-md
                        hover:bg-gray-50 disabled:opacity-50 transition-colors"
-					>
-						Download .txt
-					</button>
+						>
+							Download .md
+						</button>
+						<button
+							onClick={() => handleExport("txt")}
+							disabled={exporting}
+							className="px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                       hover:bg-gray-50 disabled:opacity-50 transition-colors"
+						>
+							Download .txt
+						</button>
+					</div>
 				</div>
 			</div>
 

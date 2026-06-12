@@ -2,8 +2,8 @@
 // Reads bundled template files from the resource directory.
 // Returns raw file contents to the frontend for insertion after migrations.
 
-use std::fs;
 use serde::Serialize;
+use std::fs;
 use tauri::Manager;
 
 #[derive(Debug, Serialize)]
@@ -29,8 +29,8 @@ pub fn load_bundled_templates(app: tauri::AppHandle) -> Result<Vec<BundledTempla
 
     let mut templates = Vec::new();
 
-    let entries = fs::read_dir(&templates_dir)
-        .map_err(|e| format!("Failed to read templates dir: {e}"))?;
+    let entries =
+        fs::read_dir(&templates_dir).map_err(|e| format!("Failed to read templates dir: {e}"))?;
 
     for entry in entries {
         let entry = entry.map_err(|e| format!("Dir entry error: {e}"))?;
@@ -46,8 +46,8 @@ pub fn load_bundled_templates(app: tauri::AppHandle) -> Result<Vec<BundledTempla
             .unwrap_or("unknown.md")
             .to_string();
 
-        let content = fs::read_to_string(&path)
-            .map_err(|e| format!("Failed to read {:?}: {e}", path))?;
+        let content =
+            fs::read_to_string(&path).map_err(|e| format!("Failed to read {:?}: {e}", path))?;
 
         templates.push(BundledTemplate { filename, content });
     }

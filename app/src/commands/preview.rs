@@ -53,7 +53,7 @@ pub fn render_preview(markdown: String) -> Result<String, String> {
     // Configure comrak to treat single newlines as <br> tags.
     // This matches user expectation that pressing Enter = new line in preview.
     let mut options = Options::default();
-    options.render.hardbreaks = true;  // <-- Single \n becomes <br>
+    options.render.hardbreaks = true; // <-- Single \n becomes <br>
 
     let html = markdown_to_html(body, &options);
     let highlighted = highlight_variables(&html);

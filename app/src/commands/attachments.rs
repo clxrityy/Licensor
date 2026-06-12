@@ -11,7 +11,7 @@ pub struct Attachment {
     pub id: String,
     pub document_id: String,
     pub filename: String,
-    pub file_path: String,   // Relative to $APPDATA — resolved at runtime
+    pub file_path: String, // Relative to $APPDATA — resolved at runtime
     pub mime_type: String,
     pub size_bytes: i64,
     pub created_at: String,
@@ -74,7 +74,10 @@ pub fn delete_attachment(app: AppHandle, id: String) -> Result<(), String> {
     let conn = open_db(&app)?;
 
     let rows = conn
-        .execute("DELETE FROM attachments WHERE id = ?1", rusqlite::params![id])
+        .execute(
+            "DELETE FROM attachments WHERE id = ?1",
+            rusqlite::params![id],
+        )
         .map_err(|e| format!("Failed to delete attachment: {e}"))?;
 
     if rows == 0 {

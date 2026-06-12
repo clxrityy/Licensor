@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, dev]
   pull_request:
     branches: [master]
 
@@ -28,11 +28,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 11
 
       - uses: dtolnay/rust-toolchain@stable
         with:

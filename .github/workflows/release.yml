@@ -4,11 +4,6 @@ on:
   push:
     branches: [master]
 
-# release-please needs write access to create PRs, releases, and tags
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   # ──────────────────────────────────────────────────────────
   # Job 1: release-please analyzes conventional commits and
@@ -16,6 +11,9 @@ jobs:
   # merged, creates a git tag + GitHub Release.
   # ──────────────────────────────────────────────────────────
   release-please:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -58,14 +56,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 11
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable
+          override: true
           # On macOS, install both arch targets for the universal binary
           targets: ${{ matrix.rust-targets }}
 
